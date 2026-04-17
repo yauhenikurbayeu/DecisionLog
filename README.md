@@ -137,7 +137,7 @@ In practice, the flow is:
   Saved test results and decision-log artifacts for iteration 3.
 - [`decisions-logs-test-4/`](./decisions-logs-test-4/)  
   Saved test results and decision-log artifacts for iteration 4.
-- [`DESISION_LOGGING_RESULTS_ANANLYSIS.md`](./DESISION_LOGGING_RESULTS_ANANLYSIS.md)  
+- [`DESISION_PROVENANCE_EVOLUTION.md`](./DESISION_PROVENANCE_EVOLUTION.md)  
   Background analysis used to shape the current design and model recommendations.
 
 ## Agents
@@ -393,7 +393,7 @@ Expected result:
 
 ## Why these model recommendations are used
 
-The recommended agent-to-model mapping is based on the behavior summarized in [`DESISION_LOGGING_RESULTS_ANANLYSIS.md`](./DESISION_LOGGING_RESULTS_ANANLYSIS.md), but the workspace intentionally keeps the explanation here practical rather than experimental.
+The recommended agent-to-model mapping is based on the behavior summarized in [`DESISION_PROVENANCE_EVOLUTION.md`](./DESISION_PROVENANCE_EVOLUTION.md), but the workspace intentionally keeps the explanation here practical rather than experimental.
 
 ### Why `Claude Opus 4.6` for `main-provenance`
 
