@@ -129,6 +129,14 @@ In practice, the flow is:
   Default decision memory for the workspace.
 - [`test-prompts/`](./test-prompts/)  
   Example scenarios that exercise the workflow.
+- [`decisions-logs-test-1/`](./decisions-logs-test-1/)  
+  Saved test results and decision-log artifacts for iteration 1.
+- [`decisions-logs-test-2/`](./decisions-logs-test-2/)  
+  Saved test results and decision-log artifacts for iteration 2.
+- [`decisions-logs-test-3/`](./decisions-logs-test-3/)  
+  Saved test results and decision-log artifacts for iteration 3.
+- [`decisions-logs-test-4/`](./decisions-logs-test-4/)  
+  Saved test results and decision-log artifacts for iteration 4.
 - [`DESISION_LOGGING_RESULTS_ANANLYSIS.md`](./DESISION_LOGGING_RESULTS_ANANLYSIS.md)  
   Background analysis used to shape the current design and model recommendations.
 
