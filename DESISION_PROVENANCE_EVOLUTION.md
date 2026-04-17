@@ -54,7 +54,7 @@ The prompt family asks the model to make product decisions or controlled non-dec
 - for the escalation prompt, include `Final Decision` and select one release option, with escalation made explicit if appropriate
 - for the negative-control prompt, rewrite the text clearly without changing its meaning and without introducing a material decision
 
-That means the prompts directly require only the task output artifact. They do **not** directly require the separate provenance log. Because of that, any corresponding entry in `decision-log.md`, `decision-log-cold.md`, or `decision-log-warm.md` is evidence that the decision-logging mechanism activated on its own and correctly identified the underlying choice as a meaningful decision.
+That means the prompts directly require only the task output artifact. They do **not** directly require the separate provenance log. Because of that, any corresponding entry in [`decision-log.md`](./decision-log.md), [`decision-log-cold.md`](./decisions-logs-test-3/decision-log-cold.md), or [`decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md) is evidence that the decision-logging mechanism activated on its own and correctly identified the underlying choice as a meaningful decision.
 
 So there are two expected outputs at evaluation time:
 
@@ -98,16 +98,16 @@ Using the same prompt across different models also reduces a major source of noi
 
 ### Artifacts Used
 
-- `.github/skills/decision-log/SKILL.md` and `.github/skills/gut-feeling/SKILL.md` - the active strict-skill contracts used in the later iterations
+- [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) and [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md) - the active strict-skill contracts used in the later iterations
 - `.github/agents/task-with-decision-log.agent.md` and `.github/agents/task-with-gut-feeling-decision-log.agent.md` - the single-agent setups used in iterations 2 and 3
-- `.github/agents/main-provenance.agent.md`, `.github/agents/user-task-executor.agent.md`, and `.github/agents/provenance-log.agent.md` - the split-agent architecture introduced for iteration 4
-- `DECISION_LOGGING_TEST_PROMPT1.md` and `DECISION_LOGGING_TEST_PROMPT1-cold.md` - roadmap-prioritization prompts used in iterations 1 and 2, and reused in iteration 4
-- `DECISION_LOGGING_TEST_PROMPT2-stale-prior.md` and `DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md` - prior-handling probes added in iteration 4
-- `DECISION_LOGGING_TEST_PROMPT4-multi-decision.md` and `DECISION_LOGGING_TEST_PROMPT4-multi-decision-cold.md` - rollout-and-safety prompts used in iteration 3 and reused in iteration 4
-- `DECISION_LOGGING_TEST_PROMPT5-escalation.md` and `DECISION_LOGGING_TEST_PROMPT6-negative-control.md` - escalation and negative-control prompts added in iteration 4
+- [`.github/agents/main-provenance.agent.md`](./.github/agents/main-provenance.agent.md), [`.github/agents/user-task-executor.agent.md`](./.github/agents/user-task-executor.agent.md), and [`.github/agents/provenance-log.agent.md`](./.github/agents/provenance-log.agent.md) - the split-agent architecture introduced for iteration 4
+- [`DECISION_LOGGING_TEST_PROMPT1.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT1.md) and `DECISION_LOGGING_TEST_PROMPT1-cold.md` - roadmap-prioritization prompts used in iterations 1 and 2, and reused in iteration 4
+- [`DECISION_LOGGING_TEST_PROMPT2-stale-prior.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT2-stale-prior.md) and [`DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md) - prior-handling probes added in iteration 4
+- [`DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT4-multi-decision.md) and `DECISION_LOGGING_TEST_PROMPT4-multi-decision-cold.md` - rollout-and-safety prompts used in iteration 3 and reused in iteration 4
+- [`DECISION_LOGGING_TEST_PROMPT5-escalation.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT5-escalation.md) and [`DECISION_LOGGING_TEST_PROMPT6-negative-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT6-negative-control.md) - escalation and negative-control prompts added in iteration 4
 - `decision_logging_test_result*.md` - per-run task outputs
-- `decision-log.md`, `decision-log-cold.md`, and `decision-log-warm.md` - decision provenance logs collected across the iterations
-- `decisions-logs-test-1/*`, `decisions-logs-test-2/*`, `decisions-logs-test-3/*`, and `decisions-logs-test-4/*` - foldered artifact sets for each iteration
+- [`decision-log.md`](./decision-log.md), [`decision-log-cold.md`](./decisions-logs-test-3/decision-log-cold.md), and [`decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md) - decision provenance logs collected across the iterations
+- [`decisions-logs-test-1/*`](./decisions-logs-test-1/), [`decisions-logs-test-2/*`](./decisions-logs-test-2/), [`decisions-logs-test-3/*`](./decisions-logs-test-3/), and [`decisions-logs-test-4/*`](./decisions-logs-test-4/) - foldered artifact sets for each iteration
 
 ### Experimental Conditions
 
@@ -156,7 +156,7 @@ The second iteration also changes the interpretation of warm-start reuse in an i
 
 The third iteration is useful for a different reason. All `8/8` result files chose the same rollout-and-safety pair, `B + B`, in both cold and warm start, so it is not a strong prompt for measuring reuse uplift. But it is a strong prompt for measuring provenance completeness, and there the results were mixed: warm logs captured only `7/8` material decisions, some runs still merged two explicit decisions into one record, and several artifacts contained timestamp or source-link inconsistencies.
 
-Against the literal contracts in `.github/skills/decision-log/SKILL.md` and `.github/skills/gut-feeling/SKILL.md`, the picture is narrower. Iteration 2 is genuinely strong on field-level skill compliance across all models, but iteration 3 regressed sharply: only GPT-5.4 remained consistently close to the required `decision-log` field schema, while Claude Opus and Claude Sonnet fell back to custom log formats and Gemini mixed one schema-shaped warm entry with non-schema and combined-decision behavior elsewhere.
+Against the literal contracts in [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) and [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md), the picture is narrower. Iteration 2 is genuinely strong on field-level skill compliance across all models, but iteration 3 regressed sharply: only GPT-5.4 remained consistently close to the required `decision-log` field schema, while Claude Opus and Claude Sonnet fell back to custom log formats and Gemini mixed one schema-shaped warm entry with non-schema and combined-decision behavior elsewhere.
 
 The new controls were only partially successful. Schema validation clearly helped at the field level, but it did not fully standardize decision granularity: `2/8` runs still logged both the primary and secondary choice inside one critical entry, and one entry omitted the explicit `Why prior was reused, refined, or overridden` field. Explicit provenance scope also improved visibility, but it exposed a major methodological issue: the cold-start condition was still not truly cold. `3/4` later cold runs acknowledged prior workspace entries, and Gemini's cold run explicitly reused earlier reasoning despite the anti-bias instruction.
 
@@ -168,57 +168,57 @@ The updated conclusion is therefore both stronger and narrower. Provenance loggi
 
 ## Source Artifacts Reviewed
 
-- `decision_logging_test_result1776197171.md` - Claude Opus 4.6 cold start
-- `decision_logging_test_result1776197378.md` - Claude Sonnet 4.6 cold start
-- `decision_logging_test_result1776197888.md` - Gemini 3.1 Pro cold start
-- `decision_logging_test_result1776198112.md` - GPT-5.4 cold start
-- `decision_logging_test_result1776199556.md` - Claude Opus 4.6 warm start
-- `decision_logging_test_result1776199698.md` - Claude Sonnet 4.6 warm start
-- `decision_logging_test_result1776199981.md` - Gemini 3.1 Pro warm start
-- `decision_logging_test_result1776200368.md` - GPT-5.4 warm start
-- `decision-log.md`
-- `.github/skills/decision-log/SKILL.md`
-- `.github/copilot-instructions.md`
-- `DECISION_LOGGING_TEST_PROMPT1.md`
+- [`decision_logging_test_result1776197171.md`](./decisions-logs-test-1/decision_logging_test_result1776197171.md) - Claude Opus 4.6 cold start
+- [`decision_logging_test_result1776197378.md`](./decisions-logs-test-1/decision_logging_test_result1776197378.md) - Claude Sonnet 4.6 cold start
+- [`decision_logging_test_result1776197888.md`](./decisions-logs-test-1/decision_logging_test_result1776197888.md) - Gemini 3.1 Pro cold start
+- [`decision_logging_test_result1776198112.md`](./decisions-logs-test-1/decision_logging_test_result1776198112.md) - GPT-5.4 cold start
+- [`decision_logging_test_result1776199556.md`](./decisions-logs-test-1/decision_logging_test_result1776199556.md) - Claude Opus 4.6 warm start
+- [`decision_logging_test_result1776199698.md`](./decisions-logs-test-1/decision_logging_test_result1776199698.md) - Claude Sonnet 4.6 warm start
+- [`decision_logging_test_result1776199981.md`](./decisions-logs-test-1/decision_logging_test_result1776199981.md) - Gemini 3.1 Pro warm start
+- [`decision_logging_test_result1776200368.md`](./decisions-logs-test-1/decision_logging_test_result1776200368.md) - GPT-5.4 warm start
+- [`decision-log.md`](./decision-log.md)
+- [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md)
+- [`.github/copilot-instructions.md`](./.github/copilot-instructions.md)
+- [`DECISION_LOGGING_TEST_PROMPT1.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT1.md)
 - `DECISION_LOGGING_TEST_PROMPT1-cold.md`
-- `decision_logging_test_result1776348000.md` - Claude Opus 4.6 cold start, second iteration
-- `decision_logging_test_result1776355200.md` - Claude Sonnet 4.6 cold start, second iteration
-- `decision_logging_test_result1776360000.md` - Gemini 3.1 Pro cold start, second iteration
-- `decision_logging_test_result1776364800.md` - GPT-5.4 cold start, second iteration
-- `decision_logging_test_result1776369600.md` - Claude Opus 4.6 warm start, second iteration
-- `decision_logging_test_result1776376800.md` - Claude Sonnet 4.6 warm start, second iteration
-- `decision_logging_test_result1776384000.md` - Gemini 3.1 Pro warm start, second iteration
-- `decision_logging_test_result1776384001.md` - GPT-5.4 warm start, second iteration
-- `.github/skills/decision-log/SKILL.md`
-- `.github/skills/gut-feeling/SKILL.md`
+- [`decision_logging_test_result1776348000.md`](./decisions-logs-test-2/decision_logging_test_result1776348000.md) - Claude Opus 4.6 cold start, second iteration
+- [`decision_logging_test_result1776355200.md`](./decisions-logs-test-2/decision_logging_test_result1776355200.md) - Claude Sonnet 4.6 cold start, second iteration
+- [`decision_logging_test_result1776360000.md`](./decisions-logs-test-2/decision_logging_test_result1776360000.md) - Gemini 3.1 Pro cold start, second iteration
+- [`decision_logging_test_result1776364800.md`](./decisions-logs-test-2/decision_logging_test_result1776364800.md) - GPT-5.4 cold start, second iteration
+- [`decision_logging_test_result1776369600.md`](./decisions-logs-test-2/decision_logging_test_result1776369600.md) - Claude Opus 4.6 warm start, second iteration
+- [`decision_logging_test_result1776376800.md`](./decisions-logs-test-2/decision_logging_test_result1776376800.md) - Claude Sonnet 4.6 warm start, second iteration
+- [`decision_logging_test_result1776384000.md`](./decisions-logs-test-2/decision_logging_test_result1776384000.md) - Gemini 3.1 Pro warm start, second iteration
+- [`decision_logging_test_result1776384001.md`](./decisions-logs-test-2/decision_logging_test_result1776384001.md) - GPT-5.4 warm start, second iteration
+- [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md)
+- [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md)
 - `.github/agents/task-with-decision-log.agent.md`
 - `.github/agents/task-with-gut-feeling-decision-log.agent.md`
-- `DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`
+- [`DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT4-multi-decision.md)
 - `DECISION_LOGGING_TEST_PROMPT4-multi-decision-cold.md`
-- `decisions-logs-test-3/decision_logging_test_result1744761600.md` - Claude Sonnet 4.6 cold start, third iteration
-- `decisions-logs-test-3/decision_logging_test_result1776297600.md` - Gemini 3.1 Pro cold start, third iteration
-- `decisions-logs-test-3/decision_logging_test_result1776297601.md` - GPT-5.4 cold start, third iteration
-- `decisions-logs-test-3/decision_logging_test_result1776508800.md` - Claude Opus 4.6 cold start, third iteration
-- `decisions-logs-test-3/decision_logging_test_result1776531200_warm.md` - Claude Opus 4.6 warm start, third iteration
-- `decisions-logs-test-3/decision_logging_test_result1776556800_warm.md` - Claude Sonnet 4.6 warm start, third iteration
-- `decisions-logs-test-3/decision_logging_test_result1776600000_warm.md` - Gemini 3.1 Pro warm start, third iteration
-- `decisions-logs-test-3/decision_logging_test_result1776297602_warm.md` - GPT-5.4 warm start, third iteration
-- `decisions-logs-test-3/decision-log-cold.md`
-- `decisions-logs-test-3/decision-log-warm.md`
-- `DECISION_LOGGING_TEST_PROMPT2-stale-prior.md`
-- `DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md`
-- `DECISION_LOGGING_TEST_PROMPT5-escalation.md`
-- `DECISION_LOGGING_TEST_PROMPT6-negative-control.md`
-- `.github/agents/main-provenance.agent.md`
-- `.github/agents/user-task-executor.agent.md`
-- `.github/agents/provenance-log.agent.md`
-- `decisions-logs-test-4/decision_logging_test_result1776373699.md`
-- `decisions-logs-test-4/decision_logging_test_result1776373865.md`
-- `decisions-logs-test-4/decision_logging_test_result1776373998.md`
-- `decisions-logs-test-4/decision_logging_test_result1776374126.md`
-- `decisions-logs-test-4/decision_logging_test_result1776374278.md`
-- `decisions-logs-test-4/decision_logging_test_result1776374480.md`
-- `decisions-logs-test-4/decision-log.md`
+- [`decisions-logs-test-3/decision_logging_test_result1744761600.md`](./decisions-logs-test-3/decision_logging_test_result1744761600.md) - Claude Sonnet 4.6 cold start, third iteration
+- [`decisions-logs-test-3/decision_logging_test_result1776297600.md`](./decisions-logs-test-3/decision_logging_test_result1776297600.md) - Gemini 3.1 Pro cold start, third iteration
+- [`decisions-logs-test-3/decision_logging_test_result1776297601.md`](./decisions-logs-test-3/decision_logging_test_result1776297601.md) - GPT-5.4 cold start, third iteration
+- [`decisions-logs-test-3/decision_logging_test_result1776508800.md`](./decisions-logs-test-3/decision_logging_test_result1776508800.md) - Claude Opus 4.6 cold start, third iteration
+- [`decisions-logs-test-3/decision_logging_test_result1776531200_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776531200_warm.md) - Claude Opus 4.6 warm start, third iteration
+- [`decisions-logs-test-3/decision_logging_test_result1776556800_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776556800_warm.md) - Claude Sonnet 4.6 warm start, third iteration
+- [`decisions-logs-test-3/decision_logging_test_result1776600000_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776600000_warm.md) - Gemini 3.1 Pro warm start, third iteration
+- [`decisions-logs-test-3/decision_logging_test_result1776297602_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776297602_warm.md) - GPT-5.4 warm start, third iteration
+- [`decisions-logs-test-3/decision-log-cold.md`](./decisions-logs-test-3/decision-log-cold.md)
+- [`decisions-logs-test-3/decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md)
+- [`DECISION_LOGGING_TEST_PROMPT2-stale-prior.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT2-stale-prior.md)
+- [`DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md)
+- [`DECISION_LOGGING_TEST_PROMPT5-escalation.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT5-escalation.md)
+- [`DECISION_LOGGING_TEST_PROMPT6-negative-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT6-negative-control.md)
+- [`.github/agents/main-provenance.agent.md`](./.github/agents/main-provenance.agent.md)
+- [`.github/agents/user-task-executor.agent.md`](./.github/agents/user-task-executor.agent.md)
+- [`.github/agents/provenance-log.agent.md`](./.github/agents/provenance-log.agent.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776373699.md`](./decisions-logs-test-4/decision_logging_test_result1776373699.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776373865.md`](./decisions-logs-test-4/decision_logging_test_result1776373865.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776373998.md`](./decisions-logs-test-4/decision_logging_test_result1776373998.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776374126.md`](./decisions-logs-test-4/decision_logging_test_result1776374126.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776374278.md`](./decisions-logs-test-4/decision_logging_test_result1776374278.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776374480.md`](./decisions-logs-test-4/decision_logging_test_result1776374480.md)
+- [`decisions-logs-test-4/decision-log.md`](./decisions-logs-test-4/decision-log.md)
 
 ## Run Summary
 
@@ -475,11 +475,11 @@ This second iteration applied two of the improvements recommended after the firs
 
 The skill and agent setup also changed:
 
-- cold start used `.github/skills/decision-log/SKILL.md` through `.github/agents/task-with-decision-log.agent.md`
-- warm start used `.github/skills/decision-log/SKILL.md` plus `.github/skills/gut-feeling/SKILL.md` through `.github/agents/task-with-gut-feeling-decision-log.agent.md`
+- cold start used [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) through `.github/agents/task-with-decision-log.agent.md`
+- warm start used [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) plus [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md) through `.github/agents/task-with-gut-feeling-decision-log.agent.md`
 - cold start used `DECISION_LOGGING_TEST_PROMPT1-cold.md`
-- warm start used `DECISION_LOGGING_TEST_PROMPT1.md`
-- cold and warm decision logs were split during execution and merged afterward into the current `decision-log.md`
+- warm start used [`DECISION_LOGGING_TEST_PROMPT1.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT1.md)
+- cold and warm decision logs were split during execution and merged afterward into the current [`decision-log.md`](./decision-log.md)
 
 ### Second-iteration run summary
 
@@ -594,7 +594,7 @@ That means the experiment is now much easier to audit, but still not controlled 
 The first-round recommendations were directionally right. The second iteration shows how to sharpen them.
 
 1. Treat cold-start isolation as an environment property, not a prompt instruction.
-Each cold run should start with no readable prior `decision-log.md` at all, not just an instruction to ignore it.
+Each cold run should start with no readable prior [`decision-log.md`](./decision-log.md) at all, not just an instruction to ignore it.
 
 2. Validate one entry per material decision, not only field presence.
 The validator should fail if a run collapses primary and secondary roadmap choices into one record.
@@ -624,8 +624,8 @@ The next step is not to prove that provenance works. Both rounds already show th
 
 This chapter compares the foldered artifacts directly:
 
-- `decisions-logs-test-1/*` for the first iteration
-- `decisions-logs-test-2/*` for the second iteration
+- [`decisions-logs-test-1/*`](./decisions-logs-test-1/) for the first iteration
+- [`decisions-logs-test-2/*`](./decisions-logs-test-2/) for the second iteration
 
 The goal here is not to restate each run again, but to answer the higher-level question: what actually improved between iteration 1 and iteration 2, what regressed, and what that means for the decision-provenance approach overall.
 
@@ -710,7 +710,7 @@ The combined conclusion is that the decision-provenance approach is working, but
 
 ## 7. Third Iteration: Multi-Decision Rollout And Safety Scenario
 
-This chapter adds the foldered artifacts in `decisions-logs-test-3/*`, which use a different prompt shape from the first two iterations.
+This chapter adds the foldered artifacts in [`decisions-logs-test-3/*`](./decisions-logs-test-3/), which use a different prompt shape from the first two iterations.
 
 Instead of choosing one ordered roadmap pair, the model now has to make two explicit decisions in one session:
 
@@ -724,25 +724,25 @@ That makes this iteration useful for a different reason. It is a weaker test of 
 This third iteration changes the scenario as well as the logging target:
 
 - cold start used `DECISION_LOGGING_TEST_PROMPT4-multi-decision-cold.md`
-- warm start used `DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`
+- warm start used [`DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT4-multi-decision.md)
 - the required output schema changed from one `Final Decision` section to `Final Decision 1` and `Final Decision 2`
-- the decision logs were again split into `decision-log-cold.md` and `decision-log-warm.md`
+- the decision logs were again split into [`decision-log-cold.md`](./decisions-logs-test-3/decision-log-cold.md) and [`decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md)
 - the same four model families were tested across cold and warm runs
 
 Artifacts reviewed for this section:
 
 - `DECISION_LOGGING_TEST_PROMPT4-multi-decision-cold.md`
-- `DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`
-- `decisions-logs-test-3/decision_logging_test_result1744761600.md`
-- `decisions-logs-test-3/decision_logging_test_result1776297600.md`
-- `decisions-logs-test-3/decision_logging_test_result1776297601.md`
-- `decisions-logs-test-3/decision_logging_test_result1776508800.md`
-- `decisions-logs-test-3/decision_logging_test_result1776531200_warm.md`
-- `decisions-logs-test-3/decision_logging_test_result1776556800_warm.md`
-- `decisions-logs-test-3/decision_logging_test_result1776600000_warm.md`
-- `decisions-logs-test-3/decision_logging_test_result1776297602_warm.md`
-- `decisions-logs-test-3/decision-log-cold.md`
-- `decisions-logs-test-3/decision-log-warm.md`
+- [`DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT4-multi-decision.md)
+- [`decisions-logs-test-3/decision_logging_test_result1744761600.md`](./decisions-logs-test-3/decision_logging_test_result1744761600.md)
+- [`decisions-logs-test-3/decision_logging_test_result1776297600.md`](./decisions-logs-test-3/decision_logging_test_result1776297600.md)
+- [`decisions-logs-test-3/decision_logging_test_result1776297601.md`](./decisions-logs-test-3/decision_logging_test_result1776297601.md)
+- [`decisions-logs-test-3/decision_logging_test_result1776508800.md`](./decisions-logs-test-3/decision_logging_test_result1776508800.md)
+- [`decisions-logs-test-3/decision_logging_test_result1776531200_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776531200_warm.md)
+- [`decisions-logs-test-3/decision_logging_test_result1776556800_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776556800_warm.md)
+- [`decisions-logs-test-3/decision_logging_test_result1776600000_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776600000_warm.md)
+- [`decisions-logs-test-3/decision_logging_test_result1776297602_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776297602_warm.md)
+- [`decisions-logs-test-3/decision-log-cold.md`](./decisions-logs-test-3/decision-log-cold.md)
+- [`decisions-logs-test-3/decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md)
 
 ### Third-iteration run summary
 
@@ -776,13 +776,13 @@ Because the outcome itself was overdetermined, the more interesting question is 
 
 Cold log quality:
 
-- all `8/8` cold material decisions are recoverable from `decision-log-cold.md`
+- all `8/8` cold material decisions are recoverable from [`decision-log-cold.md`](./decisions-logs-test-3/decision-log-cold.md)
 - `3/4` cold runs clearly split the two choices into separate decision units or subsections
 - `1/4` cold runs, Gemini (`1776297600`), compressed both decisions into one combined entry
 
 Warm log quality:
 
-- only `7/8` warm material decisions are recoverable from `decision-log-warm.md`
+- only `7/8` warm material decisions are recoverable from [`decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md)
 - `2/4` warm runs split the decisions cleanly
 - `1/4` warm runs, Gemini (`1776600000`), combined both decisions into one record
 - `1/4` warm runs, GPT-5.4 (`1776297602`), logged only the safety decision and omitted the release-scope provenance entry
@@ -791,7 +791,7 @@ So this third scenario is strong evidence that result-artifact compliance and pr
 
 #### 3. Strict `decision-log` / `gut-feeling` compliance regressed sharply in iteration 3
 
-When this iteration is graded against the literal field and traceability requirements of `.github/skills/decision-log/SKILL.md` and `.github/skills/gut-feeling/SKILL.md`, the results are weaker than the earlier prose summaries suggest.
+When this iteration is graded against the literal field and traceability requirements of [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) and [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md), the results are weaker than the earlier prose summaries suggest.
 
 - GPT-5.4 cold (`1776297601`) is the only run in iteration 3 that cleanly logs both explicit decisions as separate schema-shaped records with the expected `Timestamp`, `seconds_timestamp`, `model`, `Importance`, `Context`, `Decision`, `Rationale`, `Alternatives considered`, `Trade-offs / Risks`, and `Affected scope` fields.
 - GPT-5.4 warm (`1776297602`) stays close to the schema for the safety decision it logged, but still fails the one-record-per-meaningful-decision expectation because the release-scope decision is missing.
@@ -850,8 +850,8 @@ This matters because timestamp order is part of the provenance story. If timesta
 
 Two warm-log entries point to filenames that do not exist as written.
 
-- `decision-log-warm.md` links `1776531200` to `decision_logging_test_result1776531200.md`, but the actual artifact is `decision_logging_test_result1776531200_warm.md`
-- `decision-log-warm.md` links `1776556800` to `decision_logging_test_result1776556800.md`, but the actual artifact is `decision_logging_test_result1776556800_warm.md`
+- [`decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md) links `1776531200` to `decision_logging_test_result1776531200.md`, but the actual artifact is [`decision_logging_test_result1776531200_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776531200_warm.md)
+- [`decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md) links `1776556800` to `decision_logging_test_result1776556800.md`, but the actual artifact is [`decision_logging_test_result1776556800_warm.md`](./decisions-logs-test-3/decision_logging_test_result1776556800_warm.md)
 
 This is a smaller issue than missing decision records, but it still weakens auditability.
 
@@ -909,12 +909,12 @@ The next improvement should combine both strengths in one controlled benchmark: 
 
 This section compares the four models across the full artifact set in:
 
-- `decisions-logs-test-1/*`
-- `decisions-logs-test-2/*`
-- `decisions-logs-test-3/*`
-- `DECISION_LOGGING_TEST_PROMPT1.md`
+- [`decisions-logs-test-1/*`](./decisions-logs-test-1/)
+- [`decisions-logs-test-2/*`](./decisions-logs-test-2/)
+- [`decisions-logs-test-3/*`](./decisions-logs-test-3/)
+- [`DECISION_LOGGING_TEST_PROMPT1.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT1.md)
 - `DECISION_LOGGING_TEST_PROMPT1-cold.md`
-- `DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`
+- [`DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT4-multi-decision.md)
 - `DECISION_LOGGING_TEST_PROMPT4-multi-decision-cold.md`
 
 This is not a general benchmark of the models in the abstract. It is a cumulative ranking within this specific decision-provenance suite, which mixes:
@@ -927,7 +927,7 @@ This is not a general benchmark of the models in the abstract. It is a cumulativ
 
 Iteration 4 is intentionally excluded from the per-model ranking in this section. That later folder uses a composite hybrid stack rather than isolated model runs, so it is better treated as a system-level validation of the earlier role-splitting recommendation than as one more direct model-comparison datapoint.
 
-Because `.github/skills/decision-log/SKILL.md` and `.github/skills/gut-feeling/SKILL.md` were the explicit compliance baseline only in iterations 2 and 3, the strict skill-following judgments in this chapter are weighted mainly on those two iterations. Iteration 1 is still useful for decision-quality and warm-start-outcome evidence, but it should not be treated as the primary schema-compliance baseline.
+Because [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) and [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md) were the explicit compliance baseline only in iterations 2 and 3, the strict skill-following judgments in this chapter are weighted mainly on those two iterations. Iteration 1 is still useful for decision-quality and warm-start-outcome evidence, but it should not be treated as the primary schema-compliance baseline.
 
 ### Evaluation dimensions used here
 
@@ -936,7 +936,7 @@ The cumulative comparison uses five dimensions:
 - `Decision-making quality` — how strategically defensible the final choices were, especially in the ambiguous cold-start roadmap scenarios
 - `Reasoning quality` — how clearly the model explained trade-offs, ambiguity, and why one option dominated another
 - `Prompt following` — whether the model produced the requested artifact shape and respected cold-start anti-bias constraints and metadata requirements
-- `Strict skill compliance` — how well the model followed the literal requirements of `.github/skills/decision-log/SKILL.md` and `.github/skills/gut-feeling/SKILL.md`, including required fields, one-record-per-meaningful-decision behavior, and explicit reuse traceability when priors influenced the choice
+- `Strict skill compliance` — how well the model followed the literal requirements of [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) and [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md), including required fields, one-record-per-meaningful-decision behavior, and explicit reuse traceability when priors influenced the choice
 - `Warm-start leverage` — whether prior decisions improved or disciplined the final answer without collapsing into opaque or shallow copying
 
 ### Cumulative scorecard
@@ -1129,7 +1129,7 @@ This ranking weights decision quality, prompt discipline, and auditability sligh
 3. `Claude Sonnet 4.6`
 4. `Gemini 3.1 Pro`
 
-This ranking weights literal compliance with `.github/skills/decision-log/SKILL.md` and `.github/skills/gut-feeling/SKILL.md` more heavily:
+This ranking weights literal compliance with [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) and [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md) more heavily:
 
 - required fields
 - one-record-per-meaningful-decision behavior
@@ -1166,12 +1166,12 @@ So if this suite were used to choose models by role rather than by one global wi
 
 This section revalidates the actual `decision-log*.md` artifacts in:
 
-- `decisions-logs-test-1/`
-- `decisions-logs-test-2/`
-- `decisions-logs-test-3/`
-- `decisions-logs-test-4/`
+- [`decisions-logs-test-1/`](./decisions-logs-test-1/)
+- [`decisions-logs-test-2/`](./decisions-logs-test-2/)
+- [`decisions-logs-test-3/`](./decisions-logs-test-3/)
+- [`decisions-logs-test-4/`](./decisions-logs-test-4/)
 
-The rubric here is deliberately strict and uses `.github/skills/decision-log/SKILL.md` as the baseline. Per the request for this pass, this audit:
+The rubric here is deliberately strict and uses [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) as the baseline. Per the request for this pass, this audit:
 
 - evaluates `structure`
 - evaluates `Context` quality
@@ -1188,7 +1188,7 @@ For this section, `validity` means:
 
 ### Folder-by-folder findings
 
-#### `decisions-logs-test-1/`
+#### [`decisions-logs-test-1/`](./decisions-logs-test-1/)
 
 This folder is mixed at best under the strict `decision-log` schema.
 
@@ -1215,7 +1215,7 @@ Interpretation:
 - this folder demonstrates that the models were identifying meaningful decisions and often giving reasonable rationale
 - it does **not** demonstrate strong compliance with the later `decision-log` field contract
 
-#### `decisions-logs-test-2/`
+#### [`decisions-logs-test-2/`](./decisions-logs-test-2/)
 
 This is the strongest folder under the strict `decision-log` + `gut-feeling` rubric.
 
@@ -1256,7 +1256,7 @@ Interpretation:
 
 - if the goal is literal compliance with the active `decision-log` and `gut-feeling` skills, this is the only folder that clearly validates the setup at a high level
 
-#### `decisions-logs-test-3/`
+#### [`decisions-logs-test-3/`](./decisions-logs-test-3/)
 
 This folder regresses sharply under the strict skill rubric, even though the underlying business decisions are usually reasonable.
 
@@ -1307,7 +1307,7 @@ Interpretation:
 - this folder is still useful for studying decision quality and warm-start influence
 - it is **not** a strong demonstration of literal `decision-log` skill compliance
 
-#### `decisions-logs-test-4/`
+#### [`decisions-logs-test-4/`](./decisions-logs-test-4/)
 
 This is the strongest folder in the suite under the current strict `decision-log` + `gut-feeling` contract, but it validates a hybrid architecture rather than a single model acting alone.
 
@@ -1370,7 +1370,7 @@ Across the four folders, the strict audit supports a sharper conclusion than the
 
 ### Corrected model takeaway under the strict skill rubric
 
-When the logs are judged specifically on structure, context, and validity against `.github/skills/decision-log/SKILL.md`, the single-model recommendation remains:
+When the logs are judged specifically on structure, context, and validity against [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md), the single-model recommendation remains:
 
 1. `GPT-5.4`
 2. `Claude Opus 4.6`
@@ -1469,7 +1469,7 @@ If a system needs both auditable provenance and high-quality contextual judgment
   - trade-off interpretation
   - higher-level judgment about what still feels right under changed conditions
 
-The fourth iteration now gives concrete workflow support for this pattern. The split stack in `decisions-logs-test-4/` produced the cleanest strict logging folder in the suite: `9/9` meaningful decisions were logged as separate schema-complete records and the `1/1` negative-control prompt correctly produced no decision log at all. The remaining weakness is not the role split itself, but that the artifacts still do not expose a machine-checkable `logged_by` trace.
+The fourth iteration now gives concrete workflow support for this pattern. The split stack in [`decisions-logs-test-4/`](./decisions-logs-test-4/) produced the cleanest strict logging folder in the suite: `9/9` meaningful decisions were logged as separate schema-complete records and the `1/1` negative-control prompt correctly produced no decision log at all. The remaining weakness is not the role split itself, but that the artifacts still do not expose a machine-checkable `logged_by` trace.
 
 ### Final interpretation
 
@@ -1490,7 +1490,7 @@ So the evidence in this report most strongly supports a hybrid conclusion:
 
 ## 12. Fourth Iteration: Split-Agent Provenance Architecture
 
-This chapter evaluates the foldered artifacts in `decisions-logs-test-4/`, which are different in kind from the earlier iterations.
+This chapter evaluates the foldered artifacts in [`decisions-logs-test-4/`](./decisions-logs-test-4/), which are different in kind from the earlier iterations.
 
 Instead of comparing isolated models on the same prompt, this fourth iteration tests the role-splitting recommendation directly:
 
@@ -1510,28 +1510,28 @@ The key question is no longer "which single model wins?" It is "does the hybrid 
   - multi-decision rollout and safety decision
   - escalation-sensitive release decision
   - negative-control rewrite
-- All six prompts were executed into one folder-local `decision-log.md`.
+- All six prompts were executed into one folder-local [`decision-log.md`](./decisions-logs-test-4/decision-log.md).
 - The first five prompts intentionally create `9` meaningful decisions in total.
 - The sixth prompt is expected to create `0` meaningful decisions.
 
 Artifacts reviewed for this section:
 
-- `.github/agents/main-provenance.agent.md`
-- `.github/agents/user-task-executor.agent.md`
-- `.github/agents/provenance-log.agent.md`
-- `DECISION_LOGGING_TEST_PROMPT1.md`
-- `DECISION_LOGGING_TEST_PROMPT2-stale-prior.md`
-- `DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md`
-- `DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`
-- `DECISION_LOGGING_TEST_PROMPT5-escalation.md`
-- `DECISION_LOGGING_TEST_PROMPT6-negative-control.md`
-- `decisions-logs-test-4/decision_logging_test_result1776373699.md`
-- `decisions-logs-test-4/decision_logging_test_result1776373865.md`
-- `decisions-logs-test-4/decision_logging_test_result1776373998.md`
-- `decisions-logs-test-4/decision_logging_test_result1776374126.md`
-- `decisions-logs-test-4/decision_logging_test_result1776374278.md`
-- `decisions-logs-test-4/decision_logging_test_result1776374480.md`
-- `decisions-logs-test-4/decision-log.md`
+- [`.github/agents/main-provenance.agent.md`](./.github/agents/main-provenance.agent.md)
+- [`.github/agents/user-task-executor.agent.md`](./.github/agents/user-task-executor.agent.md)
+- [`.github/agents/provenance-log.agent.md`](./.github/agents/provenance-log.agent.md)
+- [`DECISION_LOGGING_TEST_PROMPT1.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT1.md)
+- [`DECISION_LOGGING_TEST_PROMPT2-stale-prior.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT2-stale-prior.md)
+- [`DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md)
+- [`DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT4-multi-decision.md)
+- [`DECISION_LOGGING_TEST_PROMPT5-escalation.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT5-escalation.md)
+- [`DECISION_LOGGING_TEST_PROMPT6-negative-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT6-negative-control.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776373699.md`](./decisions-logs-test-4/decision_logging_test_result1776373699.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776373865.md`](./decisions-logs-test-4/decision_logging_test_result1776373865.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776373998.md`](./decisions-logs-test-4/decision_logging_test_result1776373998.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776374126.md`](./decisions-logs-test-4/decision_logging_test_result1776374126.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776374278.md`](./decisions-logs-test-4/decision_logging_test_result1776374278.md)
+- [`decisions-logs-test-4/decision_logging_test_result1776374480.md`](./decisions-logs-test-4/decision_logging_test_result1776374480.md)
+- [`decisions-logs-test-4/decision-log.md`](./decisions-logs-test-4/decision-log.md)
 
 ### Fourth-iteration run summary
 
@@ -1621,7 +1621,7 @@ Relative to the earlier iterations, the fourth iteration fixes several previousl
 - It demonstrates strong escalation reasoning without breaking schema discipline.
 - It demonstrates clean timestamp/date consistency across all saved result artifacts.
 
-This makes `decisions-logs-test-4/` the best production-style provenance folder in the suite so far.
+This makes [`decisions-logs-test-4/`](./decisions-logs-test-4/) the best production-style provenance folder in the suite so far.
 
 ### Remaining limitation
 
@@ -1641,7 +1641,7 @@ That means the report can verify that the hybrid workflow produced better artifa
 
 3. Keep the stale-prior, conflicting-prior, escalation, and negative-control prompts in the suite. They test failure modes that the earlier iterations did not cover directly.
 
-4. Use `decisions-logs-test-4/` as the current best production-style benchmark, but do not treat it as another direct single-model ranking round.
+4. Use [`decisions-logs-test-4/`](./decisions-logs-test-4/) as the current best production-style benchmark, but do not treat it as another direct single-model ranking round.
 
 5. If this architecture is benchmarked repeatedly, freeze prompt order and prior corpus explicitly so sequential-history effects remain comparable across reruns.
 
@@ -1688,11 +1688,11 @@ So the updated recommendation is not "pick one winner." It is:
 
 This final chapter reviews the current agentic workflow itself, based on the final versions of:
 
-- `.github/agents/main-provenance.agent.md`
-- `.github/agents/user-task-executor.agent.md`
-- `.github/agents/provenance-log.agent.md`
-- `.github/skills/gut-feeling/SKILL.md`
-- `.github/skills/decision-log/SKILL.md`
+- [`.github/agents/main-provenance.agent.md`](./.github/agents/main-provenance.agent.md)
+- [`.github/agents/user-task-executor.agent.md`](./.github/agents/user-task-executor.agent.md)
+- [`.github/agents/provenance-log.agent.md`](./.github/agents/provenance-log.agent.md)
+- [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md)
+- [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md)
 
 In one sentence, this architecture turns a user task into three coordinated layers:
 
