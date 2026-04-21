@@ -11,7 +11,7 @@ This experiment was designed to validate two things about the decision provenanc
 
 ### High-Level Scenario
 
-This report now covers four iterations across three decision prompt families plus one negative-control prompt:
+This report now covers five iterations across three decision prompt families plus one negative-control prompt:
 
 - `Iterations 1 and 2` use a roadmap-prioritization prompt for an AI-powered document platform
 - the model must choose exactly one primary initiative and one secondary initiative from `A) AI contract generation`, `B) Analytics dashboard`, `C) Workflow automation`, `D) Real-time collaboration improvements`
@@ -24,6 +24,7 @@ This report now covers four iterations across three decision prompt families plu
   - `user-task-executor` on `Claude Sonnet 4.6`
   - `provenance-log` on `GPT-5.4`
 - that fourth suite reuses the roadmap and rollout prompts and adds stale-prior, conflicting-prior, escalation, and negative-control prompts
+- `Iteration 5` adds a deterministic major-decision gate (`decision-logging-threshold`) to evaluate whether a candidate decision is "meaningful-ish" enough to persist, and validates log/no-log behavior via a threshold-focused test scenario across clean-room and rerun conditions
 
 Together, these form a progressively stronger evaluation suite for decision provenance. The roadmap prompts are intentionally ambiguous and trade-off heavy, which makes them strong for measuring reuse effects on judgment. The rollout-and-safety prompt is more constrained but explicitly multi-decision, which makes it strong for testing whether the provenance layer can detect, separate, and log more than one material decision in the same task. The fourth-iteration suite then tests whether the earlier model-role conclusions actually improve the system when those roles are split across agents.
 
@@ -98,16 +99,16 @@ Using the same prompt across different models also reduces a major source of noi
 
 ### Artifacts Used
 
-- [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md) and [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md) - the active strict-skill contracts used in the later iterations
-- `.github/agents/task-with-decision-log.agent.md` and `.github/agents/task-with-gut-feeling-decision-log.agent.md` - the single-agent setups used in iterations 2 and 3
-- [`.github/agents/main-provenance.agent.md`](./.github/agents/main-provenance.agent.md), [`.github/agents/user-task-executor.agent.md`](./.github/agents/user-task-executor.agent.md), and [`.github/agents/provenance-log.agent.md`](./.github/agents/provenance-log.agent.md) - the split-agent architecture introduced for iteration 4
-- [`DECISION_LOGGING_TEST_PROMPT1.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT1.md) and `DECISION_LOGGING_TEST_PROMPT1-cold.md` - roadmap-prioritization prompts used in iterations 1 and 2, and reused in iteration 4
-- [`DECISION_LOGGING_TEST_PROMPT2-stale-prior.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT2-stale-prior.md) and [`DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT3-conflicting-priors.md) - prior-handling probes added in iteration 4
-- [`DECISION_LOGGING_TEST_PROMPT4-multi-decision.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT4-multi-decision.md) and `DECISION_LOGGING_TEST_PROMPT4-multi-decision-cold.md` - rollout-and-safety prompts used in iteration 3 and reused in iteration 4
-- [`DECISION_LOGGING_TEST_PROMPT5-escalation.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT5-escalation.md) and [`DECISION_LOGGING_TEST_PROMPT6-negative-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT6-negative-control.md) - escalation and negative-control prompts added in iteration 4
+- [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md), [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md), and [`.github/skills/decision-logging-threshold/SKILL.md`](./.github/skills/decision-logging-threshold/SKILL.md) - the active skill contracts used in iterations 4 and 5
+- [`.github/agents/main-provenance.agent.md`](./.github/agents/main-provenance.agent.md), [`.github/agents/user-task-executor.agent.md`](./.github/agents/user-task-executor.agent.md), and [`.github/agents/provenance-log.agent.md`](./.github/agents/provenance-log.agent.md) - the split-agent architecture introduced for iteration 4 and extended with a threshold gate in iteration 5
+- [`DECISION_LOGGING_TEST_PROMPT1.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT1.md) through [`DECISION_LOGGING_TEST_PROMPT6-negative-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT6-negative-control.md) - baseline, escalation, and negative-control prompts used across iterations 1 through 4
+- [`DECISION_LOGGING_TEST_PROMPT1-cold.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT1-cold.md) through [`DECISION_LOGGING_TEST_PROMPT6-negative-control-cold.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT6-negative-control-cold.md) - cold-start prompt variants used to reduce prior contamination in cold runs
+- [`DECISION_LOGGING_TEST_PROMPT7-threshold-high-score.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT7-threshold-high-score.md) through [`DECISION_LOGGING_TEST_PROMPT16-micro-decisions-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT16-micro-decisions-control.md) - threshold-suite prompts introduced in iteration 5
+- [`threshold/decision-logging-threshold-policy.md`](./threshold/decision-logging-threshold-policy.md), [`threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md`](./threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md), and [`threshold/DECISION-LOGGING-THRESHOLD-TEST-RESULT.md`](./threshold/DECISION-LOGGING-THRESHOLD-TEST-RESULT.md) - threshold policy rationale, validation scenario, and results
 - `decision_logging_test_result*.md` - per-run task outputs
-- [`decision-log.md`](./decision-log.md), [`decision-log-cold.md`](./decisions-logs-test-3/decision-log-cold.md), and [`decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md) - decision provenance logs collected across the iterations
-- [`decisions-logs-test-1/*`](./decisions-logs-test-1/), [`decisions-logs-test-2/*`](./decisions-logs-test-2/), [`decisions-logs-test-3/*`](./decisions-logs-test-3/), and [`decisions-logs-test-4/*`](./decisions-logs-test-4/) - foldered artifact sets for each iteration
+- Folder-local decision logs such as [`decisions-logs-test-3/decision-log-cold.md`](./decisions-logs-test-3/decision-log-cold.md), [`decisions-logs-test-3/decision-log-warm.md`](./decisions-logs-test-3/decision-log-warm.md), [`decisions-logs-test-4/decision-log.md`](./decisions-logs-test-4/decision-log.md), [`decisions-logs-mode-b/decision-log.md`](./decisions-logs-mode-b/decision-log.md), and [`decisions-logs-mode-c/decision-log.md`](./decisions-logs-mode-c/decision-log.md) - decision provenance logs collected across iterations and threshold modes
+- [`decisions-logs-test-1/`](./decisions-logs-test-1/), [`decisions-logs-test-2/`](./decisions-logs-test-2/), [`decisions-logs-test-3/`](./decisions-logs-test-3/), and [`decisions-logs-test-4/`](./decisions-logs-test-4/) - foldered artifact sets for each iteration
+- [`decisions-logs-mode-a/`](./decisions-logs-mode-a/), [`decisions-logs-mode-b/`](./decisions-logs-mode-b/), and [`decisions-logs-mode-c/`](./decisions-logs-mode-c/) - foldered artifact sets for the threshold suite's Mode A/B/C runs
 
 ### Experimental Conditions
 
@@ -1693,6 +1694,7 @@ This final chapter reviews the current agentic workflow itself, based on the fin
 - [`.github/agents/provenance-log.agent.md`](./.github/agents/provenance-log.agent.md)
 - [`.github/skills/gut-feeling/SKILL.md`](./.github/skills/gut-feeling/SKILL.md)
 - [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md)
+- [`.github/skills/decision-logging-threshold/SKILL.md`](./.github/skills/decision-logging-threshold/SKILL.md)
 
 In one sentence, this architecture turns a user task into three coordinated layers:
 
@@ -1726,7 +1728,8 @@ flowchart TD
     D -- Yes --> PR[Review prior decisions\nwith gut-feeling]
     PR --> EX
     EX --> ES[Execution summary:\nwork done + decisions made]
-    ES --> D2{Meaningful decisions\nactually made?}
+    ES --> TH[Normalize candidates\n+ decision-logging-threshold]
+    TH --> D2{Any candidate\npasses threshold?}
     D2 -- No --> R[Return final result\nwithout logging]
     D2 -- Yes --> PL[provenance-log\nGPT-5.4]
     PL --> LG[Append schema-complete\nentries to decision-log.md]
@@ -1748,11 +1751,12 @@ sequenceDiagram
     MP->>MP: Reuse, refine, or override priors via gut-feeling
     MP->>EX: Delegate task + constraints + provenance summary
     EX-->>MP: Return execution summary and decisions made
-    alt Meaningful decisions were made
-        MP->>PL: Pass decision context and log path
+    MP->>MP: Normalize candidates + apply decision-logging-threshold
+    alt At least one candidate passes threshold
+        MP->>PL: Pass threshold-qualified candidates + log path
         PL->>DL: Append one record per decision
         PL-->>MP: Logging complete
-    else No meaningful decisions were made
+    else No candidate passes threshold
         MP->>MP: Skip decision log update
     end
     MP-->>User: Return task result
@@ -1777,6 +1781,8 @@ The screening step is guided by the `decision-log` skill's definition of a meani
 - deferral
 
 If the task looks trivial or purely editorial, the workflow should still complete the task, but should not force a provenance record.
+
+Importantly, this screening step is a routing heuristic only. The final persistence gate is applied **after execution** by scoring explicit candidate decisions with the deterministic `decision-logging-threshold` contract.
 
 #### 2. Prior review through `gut-feeling`
 
@@ -1813,9 +1819,9 @@ By separating them, the workflow tries to keep both strong.
 
 #### 4. Logging and validation
 
-After execution, `main-provenance` passes only the meaningful decisions that were actually made to `provenance-log`.
+After execution, `main-provenance` normalizes explicit candidate decisions and applies `decision-logging-threshold`. It passes forward only candidates where `threshold_check.should_log == true`.
 
-`provenance-log` then applies the `decision-log` skill strictly. Its job is not to reinterpret the whole task from scratch. Its job is to convert the execution summary into durable provenance records that are:
+`provenance-log` then defensively re-checks `decision-logging-threshold` (in case a caller omitted it) and applies the `decision-log` skill strictly. Its job is not to reinterpret the whole task from scratch. Its job is to convert the threshold-qualified execution summary into durable provenance records that are:
 
 - one record per meaningful decision
 - explicit about context
@@ -1829,7 +1835,7 @@ This is where auditability is created.
 
 The workflow also includes a deliberate no-decision branch.
 
-If no meaningful decision was actually made, then:
+If no candidate decision passes the threshold, then:
 
 - the task still completes
 - no fake decision-log entry is created
@@ -2031,3 +2037,96 @@ It does three things that a single generic agent often struggles to do well at t
 - produce durable, auditable decision memory
 
 That is why it is useful for decision provenance specifically. It is not only trying to solve the current task. It is also trying to make the next related task smarter, safer, and easier to audit.
+
+## 15. Fifth Iteration: Deterministic Decision-Logging Threshold Gate
+
+This iteration adds a deterministic major-decision gate so the workflow no longer relies on loose "meaningful-ish" intuition when deciding whether to persist provenance.
+
+### Why this was added
+
+Earlier iterations and suites exposed two opposite risks:
+
+- over-logging: noisy execution chatter or presentation-only choices get promoted into provenance
+- under-logging: meaningful decisions get bundled, omitted, or logged inconsistently across reruns
+
+A threshold gate makes the log/no-log decision explicit, testable, and easier to keep stable as the workflow evolves.
+
+### What changed
+
+The feature is implemented as a new skill plus agent wiring:
+
+- Added [`.github/skills/decision-logging-threshold/SKILL.md`](./.github/skills/decision-logging-threshold/SKILL.md) as the canonical runtime contract for scoring and gating candidate decisions.
+- Wired the gate into both:
+  - `main-provenance` (the primary gate before any provenance write)
+  - `provenance-log` (a defensive re-check before persisting)
+- Introduced a standard `threshold_check` object so threshold outcomes can be passed downstream consistently.
+
+Operationally, the coordinator now:
+
+1. normalizes the execution summary into explicit candidate decisions (split first)
+2. applies the deterministic gate per candidate
+3. passes forward only candidates where `threshold_check.should_log == true`
+
+The threshold contract combines:
+
+- mandatory overrides (policy/compliance boundary; human interaction boundary)
+- explicit non-decision suppression (formatting, retrieval-only, repeated micro-decisions, mechanical execution)
+- a usefulness gate (must be reusable/auditable later)
+- a 5-dimension score with a `decision_score >= 5` persistence threshold when useful
+
+Rationale for the policy shape is documented in [`threshold/decision-logging-threshold-policy.md`](./threshold/decision-logging-threshold-policy.md).
+
+### How it was tested
+
+The test plan in [`threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md`](./threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md) validates the threshold contract's key behaviors:
+
+- score-based positives (including threshold-edge behavior)
+- mandatory overrides
+- explicit non-decisions and control suppression
+- bundled decision splitting before scoring
+- robustness when a prior decision log already exists
+
+It defines three execution modes:
+
+- Mode A: clean-room run (no prior log readable)
+- Mode B: prior-rich rerun of control prompts (must remain no-log)
+- Mode C: mixed-order resilience rerun (order changes should not create false positives)
+
+Suite prompt files (tracked in-repo):
+
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT7-threshold-high-score.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT7-threshold-high-score.md)
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT8-threshold-exact-five.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT8-threshold-exact-five.md)
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT9-threshold-below-five-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT9-threshold-below-five-control.md)
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT10-policy-override-privacy.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT10-policy-override-privacy.md)
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT11-human-escalation-override.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT11-human-escalation-override.md)
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT12-deterministic-transform-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT12-deterministic-transform-control.md)
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT13-retrieval-only-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT13-retrieval-only-control.md)
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT14-assumption-scope-change.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT14-assumption-scope-change.md)
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT15-split-mixed-threshold.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT15-split-mixed-threshold.md)
+- [`test-prompts/DECISION_LOGGING_TEST_PROMPT16-micro-decisions-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT16-micro-decisions-control.md)
+
+Saved run artifacts by mode:
+
+- Mode A artifacts: [`decisions-logs-mode-a/`](./decisions-logs-mode-a/)
+- Mode B artifacts: [`decisions-logs-mode-b/`](./decisions-logs-mode-b/)
+- Mode C artifacts: [`decisions-logs-mode-c/`](./decisions-logs-mode-c/)
+
+### Results and conclusions
+
+Based on the written report in [`threshold/DECISION-LOGGING-THRESHOLD-TEST-RESULT.md`](./threshold/DECISION-LOGGING-THRESHOLD-TEST-RESULT.md):
+
+- Mode A: pass — expected positives were logged, controls remained suppressed, and the split prompt logged only the substantive candidate (see [`decisions-logs-mode-a/`](./decisions-logs-mode-a/)).
+- Mode B: pass — control prompts stayed suppressed even with prior-log presence (see [`decisions-logs-mode-b/`](./decisions-logs-mode-b/)).
+- Mode C: partial pass — controls remained suppressed, but duplicate suppression / reconfirmation behavior on positives was inconsistent (see [`decisions-logs-mode-c/`](./decisions-logs-mode-c/)).
+
+So the threshold gate is effective as a binary precision filter for this suite (strong false-positive control and correct override behavior), but the surrounding provenance workflow still needs deterministic rerun semantics to be audit-grade.
+
+### Recommended next refinements
+
+1. Make duplicate / reconfirmation policy explicit and deterministic across reruns.
+
+2. Enforce clean-room boundaries so result artifacts cannot act as priors in Mode A-style validation runs.
+
+3. Persist `threshold_check` uniformly (or explicitly decide not to persist it) so threshold behavior becomes machine-auditable from saved artifacts.
+
+4. Normalize decision-log schema and formatting across logger runs to remove drift and noise in cumulative logs.

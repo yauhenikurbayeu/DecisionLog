@@ -86,10 +86,10 @@ When you use this workspace as intended, you typically get two outputs:
 
 Important behavior:
 
-- one meaningful decision should be logged as one decision entry
-- multi-decision tasks should produce multiple entries
+- one threshold-qualified decision should be logged as one decision entry
+- multi-decision tasks should produce multiple entries (one per threshold-qualified decision)
 - prior decisions are treated as soft priors, not hard rules
-- if no meaningful decision exists, no fake log entry should be created
+- if no candidate decision passes the threshold, no fake log entry should be created
 
 ## How the workflow works
 
@@ -99,7 +99,8 @@ User task
       -> review context and relevant prior decisions
       -> apply gut-feeling skill: reuse / refine / override
       -> delegate task delivery to user-task-executor
-      -> delegate final logging to provenance-log
+      -> normalize candidates + apply decision-logging-threshold
+      -> delegate strict logging to provenance-log
   -> task artifact + structured decision log
 ```
 
@@ -109,9 +110,10 @@ In practice, the flow is:
 2. If the task is non-trivial, it reviews relevant prior decisions in `decision-log.md`.
 3. It applies the `gut-feeling` skill to decide whether those priors should be reused, refined, or overridden.
 4. It sends the actual work to `user-task-executor`.
-5. After execution, it sends the meaningful decisions to `provenance-log`.
-6. `provenance-log` appends schema-compliant entries to `decision-log.md`.
-7. If no meaningful decisions were made, it records nothing rather than inventing provenance.
+5. After execution, it normalizes explicit candidate decisions and applies `decision-logging-threshold`.
+6. It sends only threshold-qualified decisions to `provenance-log`.
+7. `provenance-log` appends schema-compliant entries to `decision-log.md` (and re-checks the threshold if needed).
+8. If no candidate decision passes the threshold, it records nothing rather than inventing provenance.
 
 ## Workspace structure
 
@@ -125,6 +127,14 @@ In practice, the flow is:
   Defines how prior decisions are reviewed and reused.
 - [`.github/skills/decision-log/SKILL.md`](./.github/skills/decision-log/SKILL.md)  
   Defines what counts as a meaningful decision and how it must be logged.
+- [`.github/skills/decision-logging-threshold/SKILL.md`](./.github/skills/decision-logging-threshold/SKILL.md)  
+  Deterministic scoring gate for deciding whether a candidate decision is major enough to persist.
+- [`threshold/decision-logging-threshold-policy.md`](./threshold/decision-logging-threshold-policy.md)  
+  Narrative rationale for why the threshold policy is shaped the way it is.
+- [`threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md`](./threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md)  
+  Threshold-focused validation plan and pass criteria.
+- [`threshold/DECISION-LOGGING-THRESHOLD-TEST-RESULT.md`](./threshold/DECISION-LOGGING-THRESHOLD-TEST-RESULT.md)  
+  Observed results across clean-room and rerun modes.
 - [`decision-log.md`](./decision-log.md)  
   Default decision memory for the workspace.
 - [`test-prompts/`](./test-prompts/)  
@@ -137,6 +147,12 @@ In practice, the flow is:
   Saved test results and decision-log artifacts for iteration 3.
 - [`decisions-logs-test-4/`](./decisions-logs-test-4/)  
   Saved test results and decision-log artifacts for iteration 4.
+- [`decisions-logs-mode-a/`](./decisions-logs-mode-a/)  
+  Saved threshold-suite artifacts for Mode A (clean-room run).
+- [`decisions-logs-mode-b/`](./decisions-logs-mode-b/)  
+  Saved threshold-suite artifacts for Mode B (prior-rich control rerun).
+- [`decisions-logs-mode-c/`](./decisions-logs-mode-c/)  
+  Saved threshold-suite artifacts for Mode C (mixed-order resilience run).
 - [`DESISION_PROVENANCE_EVOLUTION.md`](./DESISION_PROVENANCE_EVOLUTION.md)  
   Background analysis used to shape the current design and model recommendations.
 
@@ -144,9 +160,9 @@ In practice, the flow is:
 
 | Agent | Recommended model | User-facing? | Purpose |
 |---|---|---:|---|
-| `main-provenance` | `Claude Opus 4.6` | Yes | Reviews context and priors, coordinates execution, and routes logging |
-| `user-task-executor` | `Claude Sonnet 4.6` | Usually no | Completes the requested work and reports meaningful decisions made |
-| `provenance-log` | `GPT-5.4` | Usually no | Writes strict, structured decision entries to the log |
+| `main-provenance` | `Claude Opus 4.6` | Yes | Reviews context and priors, coordinates execution, thresholds candidate decisions, and routes logging |
+| `user-task-executor` | `Claude Sonnet 4.6` | Usually no | Completes the requested work and reports candidate decisions made |
+| `provenance-log` | `GPT-5.4` | Usually no | Writes strict, structured decision entries for threshold-qualified candidates |
 
 ### `main-provenance`
 
@@ -159,7 +175,8 @@ Its responsibilities are to:
 - review relevant prior decisions before non-trivial choices
 - treat history as a soft prior, never as binding truth
 - delegate execution to `user-task-executor`
-- delegate final logging to `provenance-log`
+- normalize and threshold-score candidate decisions using `decision-logging-threshold`
+- delegate strict logging of threshold-qualified decisions to `provenance-log`
 
 ### `user-task-executor`
 
@@ -169,7 +186,7 @@ It should:
 
 - solve the task well
 - treat provenance guidance as advisory
-- report any meaningful decisions actually made
+- report candidate decisions and relevant context for thresholding/logging
 - avoid writing directly to `decision-log.md`
 
 ### `provenance-log`
@@ -178,7 +195,7 @@ This agent exists to keep the log strict and consistent.
 
 It should:
 
-- log only meaningful decisions
+- log only threshold-qualified decisions
 - use the schema from `.github/skills/decision-log/SKILL.md`
 - append entries instead of overwriting history
 - split multi-decision tasks into multiple entries
@@ -220,6 +237,26 @@ It treats the following as candidate decisions:
 - changing the original plan
 
 It explicitly says not to log trivial formatting or wording choices.
+
+### `decision-logging-threshold`
+
+This skill defines a deterministic gate for whether a candidate decision is major enough to persist to provenance.
+
+It scores each candidate decision across five dimensions (0–2 each) and applies:
+
+- mandatory overrides (policy/compliance and human-interaction boundaries)
+- explicit non-decision suppression (formatting, retrieval-only, micro-decisions, mechanical execution)
+- a usefulness gate (must be reusable/auditable later)
+
+Final rule:
+
+- `should_log = override_applied OR (usefulness_gate AND decision_score >= 5)`
+
+Supporting docs:
+
+- policy rationale: [`threshold/decision-logging-threshold-policy.md`](./threshold/decision-logging-threshold-policy.md)
+- test plan: [`threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md`](./threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md)
+- test results: [`threshold/DECISION-LOGGING-THRESHOLD-TEST-RESULT.md`](./threshold/DECISION-LOGGING-THRESHOLD-TEST-RESULT.md)
 
 ## Decision log format
 
@@ -391,6 +428,21 @@ Expected result:
 - a rewritten markdown artifact
 - no new decision-log entry
 
+### 7. Deterministic decision-logging threshold suite
+
+Files:
+
+- suite definition: [`threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md`](./threshold/DECISION-LOGGING-THRESHOLD-TEST-SCENARIO.md)
+- prompts: [`test-prompts/DECISION_LOGGING_TEST_PROMPT7-threshold-high-score.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT7-threshold-high-score.md) through [`test-prompts/DECISION_LOGGING_TEST_PROMPT16-micro-decisions-control.md`](./test-prompts/DECISION_LOGGING_TEST_PROMPT16-micro-decisions-control.md)
+
+Use this to validate that `decision-logging-threshold` behaves deterministically across positives, controls, override cases, split candidates, and reruns.
+
+Saved artifacts:
+
+- Mode A: [`decisions-logs-mode-a/`](./decisions-logs-mode-a/)
+- Mode B: [`decisions-logs-mode-b/`](./decisions-logs-mode-b/)
+- Mode C: [`decisions-logs-mode-c/`](./decisions-logs-mode-c/)
+
 ## Why these model recommendations are used
 
 The recommended agent-to-model mapping is based on the behavior summarized in [`DESISION_PROVENANCE_EVOLUTION.md`](./DESISION_PROVENANCE_EVOLUTION.md), but the workspace intentionally keeps the explanation here practical rather than experimental.
@@ -481,3 +533,4 @@ This workspace is a practical pattern for combining:
 - strict structured logging
 
 If you want an agent workflow that not only produces outputs but also preserves why important choices were made, `main-provenance` plus the `gut-feeling` and `decision-log` skills is the intended path.
+If you want deterministic log/no-log behavior rather than loose "meaningful-ish" intuition, keep `decision-logging-threshold` enabled in the coordinator + logger.
